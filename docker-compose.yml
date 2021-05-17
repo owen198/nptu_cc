@@ -1,0 +1,36 @@
+version: '3.2'
+
+services:
+
+  login_service:
+    container_name: "login_service"
+    build: login/
+    ports:
+      - "80:80"
+    links:
+      - rabbitmq
+
+
+  data_service:
+    container_name: data_service
+    build: data
+    image: python:3.7
+    links:
+      - rabbitmq
+      - mongodb
+
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq
+    ports:
+      - 5672:5672
+
+
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    volumes:
+      - "./db:/data/db"
+    ports:
+      - 27017:27017
