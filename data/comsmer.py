@@ -1,22 +1,28 @@
 import pika
 import time
+import logging
+import warnings
 
+# configure logger
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
+
+# connection configurations
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='192.168.8.101'))
+                pika.ConnectionParameters(host='192.168.0.8', port=5672))
 channel = connection.channel()
-
 channel.queue_declare(queue='task_queue', durable=True)
-print(' [*] Waiting for messages. To exit press CTRL+C')
 
 
 def callback(ch, method, properties, body):
-    print(" [x] Received %r" % body)
+
+    message = body.decode("utf-8") 
+    logging.info('receive messages:' + message)
     time.sleep(body.count(b'.'))
-    print(" [x] Done")
+
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
 channel.basic_qos(prefetch_count=1)
 channel.basic_consume(queue='task_queue', on_message_callback=callback)
-
 channel.start_consuming()

@@ -2,12 +2,13 @@ version: "3.9"
 services:
 
   nginx:
+    container_name: nginx
     image: nginx
     ports:
       - "80:80"
 
-  rabbitmq_list:
-    image: rabbitmq
+  rabbitmq_create_user:
+    image: rabbitmq 
     ports:
       - "5672:5672"
   
@@ -15,5 +16,30 @@ services:
     build: create_user/
     ports:
       - "5000:5000" 
-    links:
-      - "rabbitmq_list"
+    links: 
+      - "rabbitmq_create_user"
+
+  list_user:
+    container_name: api_luser
+    build: list_user/
+    ports:
+      - "5001:5000" 
+    links: 
+      - "mongodb_slave"
+
+  data:
+    build: data/
+    depends_on:
+      - "rabbitmq_create_user"
+    links: 
+      - "rabbitmq_create_user"
+
+  mongodb_master:
+    container_name: mongo_master
+    image: mongo
+
+  mongodb_slave:
+    container_name: mongo_slave
+    image: mongo
+
+  
