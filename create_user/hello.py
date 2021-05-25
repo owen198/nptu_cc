@@ -37,7 +37,7 @@ def create_user():
     message['password'] = password
 
     # push username and password
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='192.168.0.8', port=5672))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', port=5672))
     channel = connection.channel()
 
     channel.queue_declare(queue='task_queue', durable=True)

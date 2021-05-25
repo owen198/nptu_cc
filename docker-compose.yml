@@ -3,36 +3,45 @@ services:
 
   nginx:
     container_name: nginx
-    image: nginx
+    build: nginx/
     ports:
       - "80:80"
+    networks:
+      internal_routes:
 
   rabbitmq_create_user:
     image: rabbitmq 
     ports:
       - "5672:5672"
+    networks:
+      internal_routes:
+        aliases:
+          - rabbitmq
   
   create_user:
     build: create_user/
     ports:
       - "5000:5000" 
-    links: 
-      - "rabbitmq_create_user"
+    networks:
+      internal_routes:
 
   list_user:
     container_name: api_luser
     build: list_user/
-    ports:
-      - "5001:5000" 
     links: 
       - "mongodb_slave"
+    networks:
+      internal_routes:
+        aliases:
+          - list_user
 
   data:
     build: data/
     depends_on:
       - "rabbitmq_create_user"
-    links: 
-      - "rabbitmq_create_user"
+    restart: on-failure
+    networks:
+      internal_routes:
 
   mongodb_master:
     container_name: mongo_master
@@ -42,4 +51,5 @@ services:
     container_name: mongo_slave
     image: mongo
 
-  
+networks:
+  internal_routes:

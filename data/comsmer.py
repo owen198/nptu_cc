@@ -9,7 +9,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # connection configurations
 connection = pika.BlockingConnection(
-                pika.ConnectionParameters(host='192.168.0.8', port=5672))
+                pika.ConnectionParameters(host='rabbitmq', port=5672))
 channel = connection.channel()
 channel.queue_declare(queue='task_queue', durable=True)
 

@@ -13,7 +13,7 @@ parameters:
         username:
           type: string
           description: username
-          example: "jackjeng"
+          example: "owenlu"
         password:
           type: string
           example: "password"
