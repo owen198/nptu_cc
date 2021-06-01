@@ -28,8 +28,6 @@ services:
   list_user:
     container_name: api_luser
     build: list_user/
-    links: 
-      - "mongodb_slave"
     networks:
       internal_routes:
         aliases:
@@ -43,13 +41,65 @@ services:
     networks:
       internal_routes:
 
-  mongodb_master:
-    container_name: mongo_master
-    image: mongo
 
-  mongodb_slave:
-    container_name: mongo_slave
-    image: mongo
+
+  mongodb_replicate_set_1:
+    container_name: rs1
+    image: mongo:4.2
+    command: mongod --replSet RS --port 27041 --dbpath /data/db --config /resource/mongod.yml
+    volumes:
+      - ./mongodb/data/rs1:/data/db
+      - ./mongodb/mongod.yml:/resource/mongod.yml
+    ports:
+      - "27017:27041" 
+    networks:
+      internal_routes:
+        aliases:
+          - rs1
+
+  mongodb_replicate_set_1:
+    container_name: rs1
+    image: mongo:4.2
+    command: mongod --replSet RS --port 27041 --dbpath /data/db --config /resource/mongod.yml
+    ports:
+      - "27017:27041" 
+    volumes:
+      - ./mongodb/mongod.yml:/resource/mongod.yml
+      - ./mongodb/data/rs1:/data/db
+    networks:
+      internal_routes:
+        aliases:
+          - rs1
+
+  mongodb_replicate_set_2:
+    container_name: rs2
+    image: mongo:4.2
+    command: mongod --replSet RS --port 27042 --dbpath /data/db --config /resource/mongod.yml
+    ports:
+      - "27018:27042" 
+    volumes:
+      - ./mongodb/mongod.yml:/resource/mongod.yml
+      - ./mongodb/data/rs2:/data/db
+    networks:
+      internal_routes:
+        aliases:
+          - rs2
+
+  mongodb_replicate_set_3:
+    container_name: rs3
+    image: mongo:4.2
+    command: mongod --replSet RS --port 27043 --dbpath /data/db --config /resource/mongod.yml
+    ports:
+      - "27019:27043" 
+    volumes:
+      - ./mongodb/mongod.yml:/resource/mongod.yml
+      - ./mongodb/data/rs3:/data/db
+    networks:
+      internal_routes:
+        aliases:
+          - rs3
+
+
 
 networks:
   internal_routes:
