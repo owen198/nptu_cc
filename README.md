@@ -11,3 +11,9 @@ $ docker-compose up -d
 ```sh
 $ docker-compose down
 ```
+
+### Access a running container
+
+```sh
+$ docker-compose exec $SERVICE_NAME bash
+```
